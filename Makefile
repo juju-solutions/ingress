@@ -78,7 +78,7 @@ ginkgo:
 .PHONY: cdk-s390x
 cdk-s390x:
 	make ARCH=s390x -C images/ubuntu-slim container
-        make ARCH=s390x -C images/nginx-slim container
-        make ARCH=s390x -C controllers/nginx container
-        make ARCH=s390x -C controllers/nginx push
+	make ARCH=s390x -C images/nginx-slim container
+	make ARCH=s390x -C controllers/nginx container
+	make ARCH=s390x -C controllers/nginx push
 
