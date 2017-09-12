@@ -4,7 +4,7 @@ BUILDTAGS=
 
 # Use the 0.0 tag for testing, it shouldn't clobber any release builds
 TAG?=0.9.0-beta.13
-REGISTRY?=gcr.io/google_containers
+#REGISTRY?=gcr.io/google_containers
 GOOS?=linux
 DOCKER?=docker
 SED_I?=sed -i
@@ -31,7 +31,8 @@ ALL_ARCH = amd64 arm arm64 ppc64le
 QEMUVERSION=v2.9.1
 
 IMGNAME = nginx-ingress-controller
-IMAGE = $(REGISTRY)/$(IMGNAME)
+#IMAGE = $(REGISTRY)/$(IMGNAME)
+IMAGE = $(IMGNAME)
 MULTI_ARCH_IMG = $(IMAGE)-$(ARCH)
 
 # Set default base image dynamically for each arch
