@@ -75,7 +75,7 @@ release:
 ginkgo:
 	go get github.com/onsi/ginkgo/ginkgo
 
-.PHONY cdk-s390x
+.PHONY: cdk-s390x
 cdk-s390x:
 	make ARCH=s390x -C images/ubuntu-slim container
         make ARCH=s390x -C images/nginx-slim container
