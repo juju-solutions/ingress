@@ -6,7 +6,7 @@ BUILDTAGS=
 TAG?=0.9.0-beta.13
 REGISTRY?=gcr.io/google_containers
 GOOS?=linux
-DOCKER?=gcloud docker --
+DOCKER?=docker
 SED_I?=sed -i
 GOHOSTOS ?= $(shell go env GOHOSTOS)
 
@@ -77,16 +77,16 @@ container: .container-$(ARCH)
 	$(SED_I) "s|QEMUARCH|$(QEMUARCH)|g" $(DOCKERFILE)
 	$(SED_I) "s|DUMB_ARCH|$(DUMB_ARCH)|g" $(DOCKERFILE)
 
-ifeq ($(ARCH),amd64)
+#ifeq ($(ARCH),amd64)
 	# When building "normally" for amd64, remove the whole line, it has no part in the amd64 image
 	$(SED_I) "/CROSS_BUILD_/d" $(DOCKERFILE)
-else
-	# When cross-building, only the placeholder "CROSS_BUILD_" should be removed
-	# Register /usr/bin/qemu-ARCH-static as the handler for ARM binaries in the kernel
-	$(DOCKER) run --rm --privileged multiarch/qemu-user-static:register --reset
-	curl -sSL https://github.com/multiarch/qemu-user-static/releases/download/$(QEMUVERSION)/x86_64_qemu-$(QEMUARCH)-static.tar.gz | tar -xz -C $(TEMP_DIR)/rootfs
-	$(SED_I) "s/CROSS_BUILD_//g" $(DOCKERFILE)
-endif
+#else
+#	# When cross-building, only the placeholder "CROSS_BUILD_" should be removed
+#	# Register /usr/bin/qemu-ARCH-static as the handler for ARM binaries in the kernel
+#	$(DOCKER) run --rm --privileged multiarch/qemu-user-static:register --reset
+#	curl -sSL https://github.com/multiarch/qemu-user-static/releases/download/$(QEMUVERSION)/x86_64_qemu-$(QEMUARCH)-static.tar.gz | tar -xz -C $(TEMP_DIR)/rootfs
+#	$(SED_I) "s/CROSS_BUILD_//g" $(DOCKERFILE)
+#endif
 
 	$(DOCKER) build -t $(MULTI_ARCH_IMG):$(TAG) $(TEMP_DIR)/rootfs
 

@@ -62,18 +62,18 @@ container: .container-$(ARCH)
 	cd $(TEMP_DIR) && sed -i 's|BASEIMAGE|$(BASEIMAGE)|g' Dockerfile
 	cd $(TEMP_DIR) && sed -i "s|ARCH|$(QEMUARCH)|g" Dockerfile
 
-ifeq ($(ARCH),amd64)
+#ifeq ($(ARCH),amd64)
 	# When building "normally" for amd64, remove the whole line, it has no part in the amd64 image
 	cd $(TEMP_DIR) && sed -i "/CROSS_BUILD_/d" Dockerfile
-else
-	# When cross-building, only the placeholder "CROSS_BUILD_" should be removed
-	# Register /usr/bin/qemu-ARCH-static as the handler for ARM binaries in the kernel
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
-	curl -sSL https://github.com/multiarch/qemu-user-static/releases/download/$(QEMUVERSION)/x86_64_qemu-$(QEMUARCH)-static.tar.gz | tar -xz -C $(TEMP_DIR)
-	cd $(TEMP_DIR) && sed -i "s/CROSS_BUILD_//g" Dockerfile
-endif
+#else
+#	# When cross-building, only the placeholder "CROSS_BUILD_" should be removed
+#	# Register /usr/bin/qemu-ARCH-static as the handler for ARM binaries in the kernel
+#	docker run --rm --privileged multiarch/qemu-user-static:register --reset
+#	curl -sSL https://github.com/multiarch/qemu-user-static/releases/download/$(QEMUVERSION)/x86_64_qemu-$(QEMUARCH)-static.tar.gz | tar -xz -C $(TEMP_DIR)
+#	cd $(TEMP_DIR) && sed -i "s/CROSS_BUILD_//g" Dockerfile
+#endif
 
-	docker build -t $(MULTI_ARCH_IMG):$(TAG) $(TEMP_DIR)
+	docker build --build-arg http_proxy=http://squid.internal:3128 --build-arg https_proxy=https://squid.internal:3128 --build-arg HTTPS_PROXY=http://squid.internal:3128 -t $(MULTI_ARCH_IMG):$(TAG) $(TEMP_DIR)
 
 ifeq ($(ARCH), amd64)
 	# This is for to maintain the backward compatibility

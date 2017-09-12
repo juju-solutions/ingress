@@ -70,16 +70,16 @@ container: .container-$(ARCH)
 	cd $(TEMP_DIR) && sed -i 's|BASEIMAGE|$(BASEIMAGE)|g' Dockerfile.build
 	cd $(TEMP_DIR) && sed -i "s|ARCH|$(QEMUARCH)|g" Dockerfile.build
 
-ifeq ($(ARCH),amd64)
+#ifeq ($(ARCH),amd64)
 	# When building "normally" for amd64, remove the whole line, it has no part in the amd64 image
 	cd $(TEMP_DIR) && sed -i "/CROSS_BUILD_/d" Dockerfile.build
-else
-	# When cross-building, only the placeholder "CROSS_BUILD_" should be removed
-	# Register /usr/bin/qemu-ARCH-static as the handler for ARM binaries in the kernel
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
-	curl -sSL https://github.com/multiarch/qemu-user-static/releases/download/$(QEMUVERSION)/x86_64_qemu-$(QEMUARCH)-static.tar.gz | tar -xz -C $(TEMP_DIR)
-	cd $(TEMP_DIR) && sed -i "s/CROSS_BUILD_//g" Dockerfile.build
-endif
+#else
+#	# When cross-building, only the placeholder "CROSS_BUILD_" should be removed
+#	# Register /usr/bin/qemu-ARCH-static as the handler for ARM binaries in the kernel
+#	docker run --rm --privileged multiarch/qemu-user-static:register --reset
+#	curl -sSL https://github.com/multiarch/qemu-user-static/releases/download/$(QEMUVERSION)/x86_64_qemu-$(QEMUARCH)-static.tar.gz | tar -xz -C $(TEMP_DIR)
+#	cd $(TEMP_DIR) && sed -i "s/CROSS_BUILD_//g" Dockerfile.build
+#endif
 
 	docker build --pull -t $(BUILD_IMAGE) -f $(TEMP_DIR)/Dockerfile.build $(TEMP_DIR)
 	docker create --name $(BUILD_IMAGE) $(BUILD_IMAGE)
